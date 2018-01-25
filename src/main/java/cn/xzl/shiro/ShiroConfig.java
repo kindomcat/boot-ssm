@@ -4,8 +4,12 @@ import cn.xzl.filter.ShiroLoginFilter;
 import cn.xzl.filter.ShiroPermsFilter;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 
@@ -64,4 +68,54 @@ public class ShiroConfig {
         bean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return bean;
     }
+
+    // 配置会话管理
+    @Bean(name = "sessionManager")
+    public SessionManager sessionManager() {
+        DefaultWebSessionManager sessionManager = new ShiroSessionManager();
+        //默认为true
+        sessionManager.setSessionIdCookieEnabled(true);
+//        SimpleCookie simpleCookie = new SimpleCookie();
+//        simpleCookie.setName("JSESSIONID");
+////        simpleCookie.setDomain("192.168.5.49");
+//        sessionManager.setSessionIdCookie(simpleCookie);
+        return sessionManager;
+    }
+
+    // 配置自定义的权限登录器
+    @Bean(name = "authRealm")
+    public AuthRealm authRealm(@Qualifier("credentialsMatcher") CredentialsMatcher matcher) {
+        AuthRealm authRealm = new AuthRealm();
+        authRealm.setCredentialsMatcher(matcher);
+        return authRealm;
+    }
+
+    // 配置自定义的密码比较器
+    @Bean(name = "credentialsMatcher")
+    public CredentialsMatcher credentialsMatcher() {
+        return new CredentialsMatcher();
+    }
+
+    //配置shiro自己管理bean的生命周期
+    @Bean
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
+    }
+
+
+    @Bean
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();
+        creator.setProxyTargetClass(true);
+        return creator;
+    }
+
+    //开启shiro的注解模式
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(@Qualifier("securityManager") SecurityManager manager) {
+        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
+        advisor.setSecurityManager(manager);
+        return advisor;
+    }
+
 }

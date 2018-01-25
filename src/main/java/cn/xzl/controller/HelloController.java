@@ -16,8 +16,8 @@ import java.util.Map;
 public class HelloController {
 
     @RequestMapping("/test")
-    public String get(Map map){
-        System.out.println(map);
-        return "123";
+    public Map get(Map map){
+        System.out.println(1/0);
+        return null;
     }
 }

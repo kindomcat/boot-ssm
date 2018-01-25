@@ -76,6 +76,14 @@
             <artifactId>shiro-web</artifactId>
             <version>1.4.0</version>
         </dependency>
+        <!--AOP-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>5.0.2.RELEASE</version>
+        </dependency>
+
+
     </dependencies>
 
 
