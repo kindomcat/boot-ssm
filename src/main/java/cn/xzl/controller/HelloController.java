@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,8 +17,9 @@ import java.util.Map;
 public class HelloController {
 
     @RequestMapping("/test")
-    public Map get(Map map){
-        System.out.println(1/0);
-        return null;
+    public Map get(){
+        Map map1 =new HashMap();
+        map1.put("123","234");
+        return map1;
     }
 }
